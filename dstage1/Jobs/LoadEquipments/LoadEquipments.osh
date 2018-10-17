@@ -1,0 +1,62 @@
+# OSH / orchestrate script for Job LoadEquipments compiled at 11:19:06 17 OCT 2018
+#
+# OSH / orchestrate script for Job LoadEquipments compiled at 11:19:04 17 Oct 2018
+#################################################################
+#### STAGE: EquipmentDelta
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, delim=','}
+(
+ PRODUCT_LINE:string[max=255];
+ GENDER:string[max=255];
+ AGE:int32 {quote=none};
+ MARITAL_STATUS:string[max=255];
+ PROFESSION:string[max=255];
+ PURCHASE_DATE:string[max=10];
+)
+-rejects continue
+-reportProgress yes
+-firstLineColumnNames
+-file  '/SourceData/Equipment_Delta.csv'
+## General options
+[ident('EquipmentDelta'); jobmon_ident('EquipmentDelta')]
+## Outputs
+0> [] 'EquipmentDelta:Equipment.v'
+;
+#################################################################
+#### STAGE: LoadEquiment
+## Operator
+pxbridge
+## Operator options
+-Orientation link
+-XMLProperties '<?xml version=\'1.0\' encoding=\'UTF-16\'?><Properties version=\'1.1\'><Common><Context type=\'int\'>2</Context><Variant type=\'string\'>9.1</Variant><DescriptorVersion type=\'string\'>1.0</DescriptorVersion><PartitionType type=\'int\'>-1</PartitionType><RCP type=\'int\'>0</RCP></Common><Connection><Database modified=\'1\' type=\'string\'><![CDATA[SAMPLE]]></Database><Username modified=\'1\' type=\'string\'><![CDATA[db2inst1]]></Username><Password modified=\'1\' type=\'protectedstring\'><![CDATA[{iisenc}uzWEqV7vNOIBNYcTnwBtYg==]]></Password><Conductor collapsed=\'1\' type=\'bool\'><![CDATA[0]]></Conductor><UseDirectConnections type=\'bool\'><![CDATA[0]]></UseDirectConnections><KeepConductorConnectionAlive type=\'bool\'><![CDATA[1]]></KeepConductorConnectionAlive></Connection><Usage><MigratedJob type=\'bool\'><![CDATA[0]]></MigratedJob><WriteMode type=\'int\'><![CDATA[0]]></WriteMode><GenerateSQL modified=\'1\' type=\'bool\'><![CDATA[1]]></GenerateSQL><EnableQuotedIDs type=\'bool\'><![CDATA[0]]></EnableQuotedIDs><TableName modified=\'1\' type=\'string\'><![CDATA[EQUIPMENT]]></TableName><XMLColumnAsLOB type=\'bool\'><![CDATA[0]]></XMLColumnAsLOB><PrefixForExpressionColumns type=\'string\'><![CDATA[EXPR]]></PrefixForExpressionColumns><SQL></SQL><TableAction modified=\'1\' type=\'int\'><![CDATA[1]]><GenerateCreateStatement type=\'bool\'><![CDATA[1]]><FailOnError type=\'bool\'><![CDATA[1]]></FailOnError></GenerateCreateStatement></TableAction><Transaction><RecordCount type=\'int\'><![CDATA[2000]]></RecordCount></Transaction><Session><IsolationLevel type=\'int\'><![CDATA[1]]></IsolationLevel><AutocommitMode type=\'int\'><![CDATA[0]]></AutocommitMode><ArraySize type=\'int\'><![CDATA[2000]]></ArraySize><SchemaReconciliation><FailOnSizeMismatch type=\'bool\'><![CDATA[1]]></FailOnSizeMismatch><FailOnTypeMismatch type=\'bool\'><![CDATA[1]]></FailOnTypeMismatch><FailOnCodePageMismatch type=\'bool\'><![CDATA[0]]></FailOnCodePageMismatch><DropUnmatchedFields type=\'bool\'><![CDATA[1]]></DropUnmatchedFields></SchemaReconciliation><FailOnRowErrorPX type=\'bool\'><![CDATA[1]]></FailOnRowErrorPX><InsertBuffering type=\'int\'><![CDATA[0]]><AtomicArrays type=\'int\'><![CDATA[0]]></AtomicArrays></InsertBuffering></Session><Logging><LogColumnValues collapsed=\'1\' type=\'bool\'><![CDATA[0]]></LogColumnValues></Logging><BeforeAfter collapsed=\'1\' type=\'bool\'><![CDATA[0]]></BeforeAfter><ReOptimization type=\'int\'><![CDATA[2]]></ReOptimization><LockWaitMode collapsed=\'1\' type=\'int\'><![CDATA[1]]></LockWaitMode></Usage></Properties >'
+-connector '{
+variant=\'9.1\',
+library=ccdb2,
+version=1.0,
+variantlist=\'V1;9.1::ccdb2\',
+versionlist=\'1.0\',
+name=DB2Connector
+}'
+-target 0 '{
+		DSSQLType={PRODUCT_LINE=12, GENDER=12, AGE=4, MARITAL_STATUS=12, PROFESSION=12, PURCHASE_DATE=12},
+		DSDerivation={},
+		DSSQLPrecision={PRODUCT_LINE=255, GENDER=255, AGE=10, MARITAL_STATUS=255, PROFESSION=255, PURCHASE_DATE=10},
+		DSSchema=\'record
+			(
+			  PRODUCT_LINE\:string\[max\=255\]\;
+			  GENDER\:string\[max\=255\]\;
+			  AGE\:int32\ {quote=none};
+			  MARITAL_STATUS\:string\[max\=255\]\;
+			  PROFESSION\:string\[max\=255\]\;
+			  PURCHASE_DATE\:string\[max\=10\]\;
+			)\'
+}'
+## General options
+[ident('LoadEquiment'); jobmon_ident('LoadEquiment')]
+## Inputs
+0< [] 'EquipmentDelta:Equipment.v'
+;
+# End of OSH code
