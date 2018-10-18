@@ -1,0 +1,113 @@
+# OSH / orchestrate script for Job A00_Combine compiled at 13:27:42 18 OCT 2018
+#
+# OSH / orchestrate script for Job A00_Combine compiled at 13:27:40 18 Oct 2018
+#################################################################
+#### STAGE: Input
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, record_delim_string='\\r\n', delim=',', quote=double}
+(
+ UniqueIdentifier:ustring[max=10] {null_field=''};
+ ApplicantSSN:nullable ustring[max=9] {null_field=''};
+ Name:nullable ustring[max=70] {null_field=''};
+ AddressLine1:nullable ustring[max=50] {null_field=''};
+ AddressLine2:nullable ustring[max=50] {null_field=''};
+ City:nullable ustring[max=40] {null_field=''};
+ State:nullable ustring[max=2] {null_field=''};
+ Zip5:nullable ustring[max=5] {null_field=''};
+ Zip4:nullable ustring[max=4] {null_field=''};
+)
+-file  '[&"DataQualityParameters.DataLoc"]Auto.csv'
+-rejects continue
+-reportProgress yes
+## General options
+[ident('Input'); jobmon_ident('Input')]
+## Outputs
+0> [] 'Input:Source1.v'
+;
+#################################################################
+#### STAGE: Source2
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, record_delim_string='\\r\n', delim=',', quote=double}
+(
+ UniqueIdentifier:ustring[max=10] {null_field=''};
+ ApplicantSSN:nullable ustring[max=9] {null_field=''};
+ Name:nullable ustring[max=70] {null_field=''};
+ AddressLine1:nullable ustring[max=50] {null_field=''};
+ AddressLine2:nullable ustring[max=50] {null_field=''};
+ City:nullable ustring[max=40] {null_field=''};
+ State:nullable ustring[max=2] {null_field=''};
+ Zip5:nullable ustring[max=5] {null_field=''};
+ Zip4:nullable ustring[max=4] {null_field=''};
+)
+-file  '[&"DataQualityParameters.DataLoc"]Life.csv'
+-rejects continue
+-reportProgress yes
+## General options
+[ident('Source2'); jobmon_ident('Source2')]
+## Outputs
+0> [] 'Source2:Source2.v'
+;
+#################################################################
+#### STAGE: Source3
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, record_delim_string='\\r\n', delim=',', quote=double}
+(
+ UniqueIdentifier:ustring[max=10] {null_field=''};
+ ApplicantSSN:nullable ustring[max=9] {null_field=''};
+ Name:nullable ustring[max=70] {null_field=''};
+ AddressLine1:nullable ustring[max=50] {null_field=''};
+ AddressLine2:nullable ustring[max=50] {null_field=''};
+ City:nullable ustring[max=40] {null_field=''};
+ State:nullable ustring[max=2] {null_field=''};
+ Zip5:nullable ustring[max=5] {null_field=''};
+ Zip4:nullable ustring[max=4] {null_field=''};
+)
+-file  '[&"DataQualityParameters.DataLoc"]Home.csv'
+-rejects continue
+-reportProgress yes
+## General options
+[ident('Source3'); jobmon_ident('Source3')]
+## Outputs
+0> [] 'Source3:Source3.v'
+;
+#################################################################
+#### STAGE: Collect
+## Operator
+sortfunnel
+## Operator options
+-key 'UniqueIdentifier'
+-asc
+## General options
+[ident('Collect'); jobmon_ident('Collect')]
+## Inputs
+0< [] 'Source3:Source3.v'
+1< [] 'Source2:Source2.v'
+2< [] 'Input:Source1.v'
+## Outputs
+0> [modify (
+keep
+UniqueIdentifier,ApplicantSSN,Name,AddressLine1,
+AddressLine2,City,State,Zip5,
+Zip4;)] 'Collect:Input.v'
+;
+###############################################################
+#### STAGE: InputData
+## Operator
+copy
+## General options
+[ident('InputData')]
+## Inputs
+0< [] 'Collect:Input.v'
+## Outputs
+0>| [ds]'[&"DataQualityParameters.DataLoc"]InputData.ds'
+;
+# End of OSH code
