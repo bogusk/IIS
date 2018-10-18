@@ -1,0 +1,49 @@
+# OSH / orchestrate script for Job ASBKafka compiled at 16:51:12 18 OCT 2018
+#
+# OSH / orchestrate script for Job ASBKafka compiled at 16:51:09 18 Oct 2018
+#################################################################
+#### STAGE: IISKafka
+## Operator
+pxbridge
+## Operator options
+-Orientation stage
+-XMLProperties '<?xml version=\'1.0\' encoding=\'UTF-16\'?><Properties version=\'1.1\'><Common><Context type=\'int\'>1</Context><Variant type=\'string\'>1.0</Variant><DescriptorVersion type=\'string\'>1.0</DescriptorVersion><PartitionType type=\'int\'>-1</PartitionType><RCP type=\'int\'>0</RCP></Common><Connection><ServerName modified=\'1\' type=\'string\'><![CDATA[ug-server.ibm.com:2181]]></ServerName><SecureConnection type=\'int\'><![CDATA[0]]></SecureConnection><ServicePrincipal type=\'string\'><![CDATA[Kafka]]></ServicePrincipal></Connection><Usage><TopicName modified=\'1\' type=\'string\'><![CDATA[InfosphereEvents ]]></TopicName><KeySerializerType type=\'int\'><![CDATA[0]]></KeySerializerType><ValueSerializerType type=\'int\'><![CDATA[0]]></ValueSerializerType><ConsumerGroupName modified=\'1\' type=\'string\'><![CDATA[Information Server]]></ConsumerGroupName><MaxPollRecords type=\'int\'><![CDATA[100]]></MaxPollRecords><MaxMessages type=\'int\'><![CDATA[100]]></MaxMessages><ResetPolicy type=\'int\'><![CDATA[0]]></ResetPolicy><ContinuousMode collapsed=\'1\' modified=\'1\' type=\'bool\'><![CDATA[0]]></ContinuousMode><Timeout type=\'int\'><![CDATA[30]]></Timeout><Transaction><RecordCount type=\'int\'><![CDATA[0]]></RecordCount><TimeInterval type=\'int\'><![CDATA[0]]></TimeInterval><EndOfWave collapsed=\'1\' type=\'bool\'><![CDATA[0]]></EndOfWave></Transaction><Java><HeapSize type=\'int\'><![CDATA[150]]></HeapSize><ConnectorClasspath type=\'string\'><![CDATA[$(DSHOME)/../DSComponents/bin/KafkaConnector.jar;$(DSHOME)/java/lib/commons-logging.jar;$(DSHOME)/../DSComponents/bin/ccjava-api.jar;$(DSHOME)/../DSComponents/bin/ccjava.jar]]></ConnectorClasspath><Classpath modified=\'1\' type=\'string\'><![CDATA[/opt/IBM/InformationServer/shared-open-source/kafka/install/libs/kafka-clients-0.10.0.1.jar;/opt/IBM/InformationServer/shared-open-source/kafka/install/libs/log4j-1.2.17.jar;/opt/IBM/InformationServer/shared-open-source/kafka/install/libs/slf4j-api-1.7.21.jar]]></Classpath><ConnectorOtherOptions type=\'string\'><![CDATA[-Dcom.ibm.tools.attach.enable=no -Dcom.ibm.is.cc.options=noisfjars]]></ConnectorOtherOptions></Java><UserClassName type=\'string\'><![CDATA[com.ibm.is.cc.kafka.runtime.KafkaProcessor]]></UserClassName></Usage></Properties >'
+-connector '{
+variant=\'1.0\',
+library="java:com/ibm/is/cc/javastage/connector/CC_JavaConnectorLibrary",
+version=1.0,
+variantlist=\'V1;1.0::"java:com/ibm/is/cc/javastage/connector/CC_JavaConnectorLibrary"\',
+versionlist=\'1.0\',
+name=KafkaConnector
+}'
+-linkXMLProperties source 0  '<?xml version=\'1.0\' encoding=\'UTF-16\'?><Properties version=\'1.1\'><Common><Context type=\'int\'>1</Context><Variant type=\'string\'>1.0</Variant><Reject></Reject><DescriptorVersion type=\'string\'>1.0</DescriptorVersion><PartitionType type=\'int\'>-1</PartitionType><RCP type=\'int\'>0</RCP></Common><Usage></Usage></Properties >'
+-source 0 '{
+		DSSQLType={Event=12},
+		DSSQLPrecision={Event=50000},
+		DSSchema=\'record
+			(
+			  Event\:string\[max\=50000\]\;
+			)\'
+}'
+## General options
+[ident('IISKafka'); jobmon_ident('IISKafka')]
+## Outputs
+0> [modify (
+  Event:not_nullable string[max=50000]=Event;
+keep
+   Event;
+)] 'IISKafka:IISEvents.v'
+;
+#################################################################
+#### STAGE: IISEvents
+## Operator
+peek
+## Operator options
+-nrecs 10
+-name
+## General options
+[ident('IISEvents'); jobmon_ident('IISEvents')]
+## Inputs
+0< [] 'IISKafka:IISEvents.v'
+;
+# End of OSH code
